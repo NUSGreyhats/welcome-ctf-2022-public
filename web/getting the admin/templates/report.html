@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %} Viewing Report {{ report_no }} {% endblock %}
+{% block content %}
+{% autoescape false %}
+<h1>Report {{ report_id }}</h1>
+<div class="container">
+    <p>
+        Your report is submitted.
+    </p>
+    <div class="container">
+        ====== Report starts here ======
+        <br />
+        {{ report }}
+        <br />
+        ====== Report ends here  ======
+    </div>
+    <br>
+    <a href="/" class="btn btn-primary">Back</a>
+</div>
+
+
+{% endautoescape %}
+{% endblock %}

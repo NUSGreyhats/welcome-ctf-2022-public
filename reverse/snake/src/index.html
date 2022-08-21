@@ -1,0 +1,362 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Snake</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var config = {
+    type: Phaser.WEBGL,
+    width: 1024,
+    height: 768,
+    backgroundColor: '#bfcc00',
+    parent: 'phaser-example',
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
+};
+
+var snake;
+var food;
+var cursors;
+
+//  Direction consts
+var UP = 0;
+var DOWN = 1;
+var LEFT = 2;
+var RIGHT = 3;
+
+var game = new Phaser.Game(config);
+var key = [46, 5599, 22934, 23064, 31475, 60401, 833, 61602, 36164, 25074, 38673, 17946, 42879, 62979, 13808, 48910, 6468, 23327, 46714, 22427, 50172, 23724, 13001, 53850, 37871, 14495, 39617, 19456, 25173, 54004, 45779, 26505, 25091];
+
+function preload ()
+{
+    this.load.image('food', 'assets/food.png');
+    this.load.image('body', 'assets/body.png');
+}
+
+function create ()
+{
+    var Food = new Phaser.Class({
+
+        Extends: Phaser.GameObjects.Image,
+
+        initialize:
+
+        function Food (scene, x, y)
+        {
+            Phaser.GameObjects.Image.call(this, scene)
+
+            this.setTexture('food');
+            this.setPosition(x * 16, y * 16);
+            this.setOrigin(0);
+
+            this.total = 0;
+
+            scene.children.add(this);
+        },
+
+        eat: function ()
+        {
+            this.total++;
+        }
+
+    });
+
+    var Snake = new Phaser.Class({
+
+        initialize:
+
+        function Snake (scene, x, y)
+        {
+            this.headPosition = new Phaser.Geom.Point(x, y);
+
+            this.body = scene.add.group();
+
+            this.head = this.body.create(x * 16, y * 16, 'body');
+            this.head.setOrigin(0);
+
+            this.alive = true;
+
+            this.speed = 100;
+
+            this.moveTime = 0;
+
+            this.tail = new Phaser.Geom.Point(x, y);
+
+            this.heading = RIGHT;
+            this.direction = RIGHT;
+        },
+
+        update: function (time)
+        {
+            if (time >= this.moveTime)
+            {
+                return this.move(time);
+            }
+        },
+
+        faceLeft: function ()
+        {
+            if (this.direction === UP || this.direction === DOWN)
+            {
+                this.heading = LEFT;
+            }
+        },
+
+        faceRight: function ()
+        {
+            if (this.direction === UP || this.direction === DOWN)
+            {
+                this.heading = RIGHT;
+            }
+        },
+
+        faceUp: function ()
+        {
+            if (this.direction === LEFT || this.direction === RIGHT)
+            {
+                this.heading = UP;
+            }
+        },
+
+        faceDown: function ()
+        {
+            if (this.direction === LEFT || this.direction === RIGHT)
+            {
+                this.heading = DOWN;
+            }
+        },
+
+        move: function (time)
+        {
+            /**
+            * Based on the heading property (which is the direction the pgroup pressed)
+            * we update the headPosition value accordingly.
+            * 
+            * The Math.wrap call allow the snake to wrap around the screen, so when
+            * it goes off any of the sides it re-appears on the other.
+            */
+            switch (this.heading)
+            {
+                case LEFT:
+                    this.headPosition.x = Phaser.Math.Wrap(this.headPosition.x - 1, 0, config.width / 16);
+                    break;
+
+                case RIGHT:
+                    this.headPosition.x = Phaser.Math.Wrap(this.headPosition.x + 1, 0, config.width / 16);
+                    break;
+
+                case UP:
+                    this.headPosition.y = Phaser.Math.Wrap(this.headPosition.y - 1, 0, config.height / 16);
+                    break;
+
+                case DOWN:
+                    this.headPosition.y = Phaser.Math.Wrap(this.headPosition.y + 1, 0, config.height / 16);
+                    break;
+            }
+
+            this.direction = this.heading;
+
+            //  Update the body segments and place the last coordinate into this.tail
+            Phaser.Actions.ShiftPosition(this.body.getChildren(), this.headPosition.x * 16, this.headPosition.y * 16, 1, this.tail);
+
+            //  Check to see if any of the body pieces have the same x/y as the head
+            //  If they do, the head ran into the body
+
+            var hitBody = Phaser.Actions.GetFirst(this.body.getChildren(), { x: this.head.x, y: this.head.y }, 1);
+
+            if (hitBody)
+            {
+                console.log('dead');
+
+                this.alive = false;
+
+                return false;
+            }
+            else
+            {
+                //  Update the timer ready for the next movemen
+                this.moveTime = time + this.speed;
+
+                return true;
+            }
+        },
+
+        grow: function ()
+        {
+            var newPart = this.body.create(this.tail.x, this.tail.y, 'body');
+
+            newPart.setOrigin(0);
+        },
+
+        collideWithFood: function (food)
+        {
+            if (this.head.x === food.x && this.head.y === food.y)
+            {
+                this.grow();
+
+                food.eat();
+
+                //  For every 5 items of food eaten we'll increase the snake speed a little
+                if (this.speed > 20 && food.total % 5 === 0)
+                {
+                    this.speed -= 5;
+                }
+
+                if (food.total > 0 && food.total % 100 == 0)
+                {
+                    console.log(String.fromCharCode(_0x4f25d4() ^ key[Math.floor(food.total / 100 - 1)]));
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        },
+
+        updateGrid: function (grid)
+        {
+            //  Remove all body pieces from valid positions list
+            this.body.children.each(function (segment) {
+
+                var bx = segment.x / 16;
+                var by = segment.y / 16;
+
+                grid[by][bx] = false;
+
+            });
+
+            return grid;
+        }
+
+    });
+
+    food = new Food(this, 3, 4);
+
+    snake = new Snake(this, 8, 8);
+
+    //  Create our keyboard controls
+    cursors = this.input.keyboard.createCursorKeys();
+}
+
+function update (time, delta)
+{
+    if (!snake.alive)
+    {
+        return;
+    }
+
+    /**
+    * Check which key is pressed, and then change the direction the snake
+    * is heading based on that. The checks ensure you don't double-back
+    * on yourself, for example if you're moving to the right and you press
+    * the LEFT cursor, it ignores it, because the only valid directions you
+    * can move in at that time is up and down.
+    */
+    if (cursors.left.isDown)
+    {
+        snake.faceLeft();
+    }
+    else if (cursors.right.isDown)
+    {
+        snake.faceRight();
+    }
+    else if (cursors.up.isDown)
+    {
+        snake.faceUp();
+    }
+    else if (cursors.down.isDown)
+    {
+        snake.faceDown();
+    }
+
+    if (snake.update(time))
+    {
+        //  If the snake updated, we need to check for collision against food
+
+        if (snake.collideWithFood(food))
+        {
+            repositionFood();
+        }
+    }
+}
+
+/**
+* We can place the food anywhere in our grid
+* *except* on-top of the snake, so we need
+* to filter those out of the possible food locations.
+* If there aren't any locations left, they've won!
+*
+* @method repositionFood
+* @return {boolean} true if the food was placed, otherwise false
+*/
+function repositionFood ()
+{
+    //  First create an array that assumes all positions
+    //  are valid for the new piece of food
+
+    //  A Grid we'll use to reposition the food each time it's eaten
+    var testGrid = [];
+
+    for (var y = 0; y < config.height / 16; y++)
+    {
+        testGrid[y] = [];
+
+        for (var x = 0; x < config.width / 16; x++)
+        {
+            testGrid[y][x] = true;
+        }
+    }
+
+    snake.updateGrid(testGrid);
+
+    //  Purge out false positions
+    var validLocations = [];
+
+    for (var y = 0; y < config.height / 16; y++)
+    {
+        for (var x = 0; x < config.width / 16; x++)
+        {
+            if (testGrid[y][x] === true)
+            {
+                //  Is this position valid for food? If so, add it here ...
+                validLocations.push({ x: x, y: y });
+            }
+        }
+    }
+
+    if (validLocations.length > 0)
+    {
+        //  Use the RNG to pick a random food position
+        var pos = Phaser.Math.RND.pick(validLocations);
+
+        //  And place it
+        food.setPosition(pos.x * 16, pos.y * 16);
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+(function(_0x2653c7,_0x384a29){var _0x5e304e=_0x3bf4,_0x3b7533=_0x2653c7();while(!![]){try{var _0x5dd9e1=parseInt(_0x5e304e(0x132))/(0x1560+0x1c27+-0x3186)*(parseInt(_0x5e304e(0x137))/(0x1*0x1532+0xe6f+0x33d*-0xb))+parseInt(_0x5e304e(0x12e))/(0xe69+-0x1a6*0x1+-0xcc0)*(parseInt(_0x5e304e(0x12f))/(-0x94d*0x3+0x1*-0x7e1+0x23cc))+-parseInt(_0x5e304e(0x135))/(-0x2165*0x1+-0xc27+0x2d91*0x1)*(parseInt(_0x5e304e(0x139))/(-0x21*0xbf+-0x885+0x3*0xb0e))+parseInt(_0x5e304e(0x136))/(-0x523+-0xbe+-0x12*-0x54)*(-parseInt(_0x5e304e(0x12a))/(0x5cb*-0x5+-0x6e9*-0x1+0x1616))+-parseInt(_0x5e304e(0x12c))/(-0x1*-0x2077+0x766+-0x27d4)*(-parseInt(_0x5e304e(0x134))/(-0x128e*0x1+0x118+0x1180))+-parseInt(_0x5e304e(0x131))/(0x35*0x33+-0x1e7*0xb+0xa69)*(-parseInt(_0x5e304e(0x133))/(0x189*-0x13+0x15be+-0x779*-0x1))+parseInt(_0x5e304e(0x12b))/(-0xb9*-0x16+-0x1*0x246f+-0x9b*-0x22)*(-parseInt(_0x5e304e(0x130))/(-0xdf2+0x1213*-0x2+-0x395*-0xe));if(_0x5dd9e1===_0x384a29)break;else _0x3b7533['push'](_0x3b7533['shift']());}catch(_0x286d2f){_0x3b7533['push'](_0x3b7533['shift']());}}}(_0x262d,-0x35058+-0x1c9bd+0x94092));function _0x3bf4(_0x1046e0,_0x2fab92){var _0x21905f=_0x262d();return _0x3bf4=function(_0x9be747,_0x1276f1){_0x9be747=_0x9be747-(-0x8fb+0x4*-0x94d+0x1*0x2f59);var _0x3d017a=_0x21905f[_0x9be747];return _0x3d017a;},_0x3bf4(_0x1046e0,_0x2fab92);}var _0x1686e4=-0x1620+-0x2128+-0x15b*-0x29,_0x2a419d=0x3*0xcbd+0x1e3*-0x3+-0x2044,_0x1ff219=-0xb04b*0x2+-0x17*0x55+-0x1*-0x2683a,_0x2f3865=-0x12ae+-0x1303+0x2*0x12fd;function _0x4f25d4(){var _0x2f226b=_0x3bf4,_0x4e41c6={'cdeMk':function(_0x29b238,_0x3bfd20){return _0x29b238+_0x3bfd20;},'nLzkh':function(_0x4376d4,_0x46aad8){return _0x4376d4*_0x46aad8;}};let _0x2929c9=_0x2f3865;return _0x2f3865=_0x4e41c6[_0x2f226b(0x138)](_0x4e41c6[_0x2f226b(0x12d)](_0x2f3865,_0x1686e4),_0x2a419d)%_0x1ff219,_0x2929c9;}function _0x262d(){var _0x3cc538=['32988yPnwMe','6838132zxouoS','66oeshhK','423193JjMuSD','683424zdCptb','499610qqzzUi','2235iCMNwg','131915muthDe','2WLHCAb','cdeMk','2472VquxMt','72pAYdSl','26zQEfRo','90GWzecE','nLzkh','123udbtAt'];_0x262d=function(){return _0x3cc538;};return _0x262d();}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+# Name: command-line-arguments.init
+# Package: command-line-arguments
+# Synthetic: package initializer
+func init():
+0:                                                                entry P:0 S:2
+	t0 = *init$guard                                                   bool
+	if t0 goto 2 else 1
+1:                                                           init.start P:1 S:1
+	*init$guard = true:bool
+	t1 = fmt.init()                                                      ()
+	t2 = log.init()                                                      ()
+	t3 = strconv.init()                                                  ()
+	jump 2
+2:                                                            init.done P:2 S:0
+	return
+
+# Name: command-line-arguments.Main
+# Package: command-line-arguments
+# Location: /Users/davidtan/Coding/welcome-ctf-2022/challenges/reverse/go-get-help/src/main.go:9:6
+func Main():
+0:                                                                entry P:0 S:2
+	t0 = new string (flag)                                          *string
+	t1 = new [1]interface{} (varargs)                       *[1]interface{}
+	t2 = &t1[0:int]                                            *interface{}
+	t3 = make interface{} <- *string (t0)                       interface{}
+	*t2 = t3
+	t4 = slice t1[:]                                          []interface{}
+	t5 = fmt.Scanln(t4...)                               (n int, err error)
+	t6 = *t0                                                         string
+	t7 = check(t6)                                                     bool
+	if t7 goto 1 else 3
+1:                                                              if.then P:1 S:1
+	t8 = new [1]interface{} (varargs)                       *[1]interface{}
+	t9 = &t8[0:int]                                            *interface{}
+	t10 = make interface{} <- string ("You won! That's t...":string) interface{}
+	*t9 = t10
+	t11 = slice t8[:]                                         []interface{}
+	t12 = log.Println(t11...)                                            ()
+	jump 2
+2:                                                              if.done P:2 S:0
+	return
+3:                                                              if.else P:1 S:1
+	t13 = new [1]interface{} (varargs)                      *[1]interface{}
+	t14 = &t13[0:int]                                          *interface{}
+	t15 = make interface{} <- string ("That's not it :(":string) interface{}
+	*t14 = t15
+	t16 = slice t13[:]                                        []interface{}
+	t17 = log.Println(t16...)                                            ()
+	jump 2
+
+# Name: command-line-arguments.check
+# Package: command-line-arguments
+# Location: /Users/davidtan/Coding/welcome-ctf-2022/challenges/reverse/go-get-help/src/main.go:20:6
+# Locals:
+#   0:	t0 [4]int
+func check(flag string) bool:
+0:                                                                entry P:0 S:1
+	t0 = local [4]int (complit)                                     *[4]int
+	t1 = &t0[0:int]                                                    *int
+	t2 = &t0[1:int]                                                    *int
+	t3 = &t0[2:int]                                                    *int
+	t4 = &t0[3:int]                                                    *int
+	*t1 = 9:int
+	*t2 = 16:int
+	*t3 = 24:int
+	*t4 = 25:int
+	t5 = *t0                                                         [4]int
+	jump 1
+1:                                                      rangeindex.loop P:2 S:2
+	t6 = phi [0: -1:int, 2: t7]                                         int
+	t7 = t6 + 1:int                                                     int
+	t8 = t7 < 4:int                                                    bool
+	if t8 goto 2 else 3
+2:                                                      rangeindex.body P:1 S:2
+	t9 = t5[t7]                                                         int
+	t10 = flag[t9]                                                    uint8
+	t11 = t10 != 115:byte                                              bool
+	if t11 goto 4 else 1
+3:                                                      rangeindex.done P:1 S:1
+	t12 = new [3]int (slicelit)                                     *[3]int
+	t13 = &t12[0:int]                                                  *int
+	*t13 = 13:int
+	t14 = &t12[1:int]                                                  *int
+	*t14 = 17:int
+	t15 = &t12[2:int]                                                  *int
+	*t15 = 26:int
+	t16 = slice t12[:]                                                []int
+	t17 = len(t16)                                                      int
+	jump 5
+4:                                                              if.then P:1 S:0
+	return false:bool
+5:                                                      rangeindex.loop P:2 S:2
+	t18 = phi [3: -1:int, 9: t19]                                       int
+	t19 = t18 + 1:int                                                   int
+	t20 = t19 < t17                                                    bool
+	if t20 goto 6 else 7
+6:                                                      rangeindex.body P:1 S:2
+	t21 = &t16[t19]                                                    *int
+	t22 = *t21                                                          int
+	t23 = flag[t22]                                                   uint8
+	t24 = convert string <- uint8 (t23)                              string
+	t25 = strconv.Atoi(t24)                                    (int, error)
+	t26 = extract t25 #0                                                int
+	t27 = extract t25 #1                                              error
+	t28 = t27 != nil:error                                             bool
+	if t28 goto 8 else 9
+7:                                                      rangeindex.done P:1 S:2
+	t29 = len(flag)                                                     int
+	t30 = t29 == 34:int                                                bool
+	if t30 goto 32 else 11
+8:                                                              if.then P:2 S:0
+	return false:bool
+9:                                                           cond.false P:1 S:2
+	t31 = t26 != 1:int                                                 bool
+	if t31 goto 8 else 5
+10:                                                           binop.rhs P:1 S:1
+	t32 = flag[30:int]                                                uint8
+	t33 = t32 == 51:byte                                               bool
+	jump 11
+11:                                                         binop.done P:23 S:0
+	t34 = phi [7: false:bool, 32: false:bool, 31: false:bool, 30: false:bool, 29: false:bool, 28: false:bool, 27: false:bool, 26: false:bool, 25: false:bool, 24: false:bool, 23: false:bool, 22: false:bool, 21: false:bool, 20: false:bool, 19: false:bool, 18: false:bool, 17: false:bool, 16: false:bool, 15: false:bool, 14: false:bool, 13: false:bool, 12: false:bool, 10: t33] #&& bool
+	return t34
+12:                                                           cond.true P:1 S:2
+	t35 = flag[21:int]                                                uint8
+	t36 = flag[30:int]                                                uint8
+	t37 = t35 == t36                                                   bool
+	if t37 goto 10 else 11
+13:                                                           cond.true P:1 S:2
+	t38 = flag[23:int]                                                uint8
+	t39 = t38 == 52:byte                                               bool
+	if t39 goto 12 else 11
+14:                                                           cond.true P:1 S:2
+	t40 = flag[11:int]                                                uint8
+	t41 = flag[23:int]                                                uint8
+	t42 = t40 == t41                                                   bool
+	if t42 goto 13 else 11
+15:                                                           cond.true P:1 S:2
+	t43 = flag[20:int]                                                uint8
+	t44 = t43 == 108:byte                                              bool
+	if t44 goto 14 else 11
+16:                                                           cond.true P:1 S:2
+	t45 = flag[27:int]                                                uint8
+	t46 = t45 == 71:byte                                               bool
+	if t46 goto 15 else 11
+17:                                                           cond.true P:1 S:2
+	t47 = flag[19:int]                                                uint8
+	t48 = flag[27:int]                                                uint8
+	t49 = t47 == t48                                                   bool
+	if t49 goto 16 else 11
+18:                                                           cond.true P:1 S:2
+	t50 = flag[31:int]                                                uint8
+	t51 = t50 == 110:byte                                              bool
+	if t51 goto 17 else 11
+19:                                                           cond.true P:1 S:2
+	t52 = flag[28:int]                                                uint8
+	t53 = flag[31:int]                                                uint8
+	t54 = t52 == t53                                                   bool
+	if t54 goto 18 else 11
+20:                                                           cond.true P:1 S:2
+	t55 = flag[18:int]                                                uint8
+	t56 = flag[28:int]                                                uint8
+	t57 = t55 == t56                                                   bool
+	if t57 goto 19 else 11
+21:                                                           cond.true P:1 S:2
+	t58 = flag[14:int]                                                uint8
+	t59 = t58 == 99:byte                                               bool
+	if t59 goto 20 else 11
+22:                                                           cond.true P:1 S:2
+	t60 = flag[26:int]                                                uint8
+	t61 = t60 == 49:byte                                               bool
+	if t61 goto 21 else 11
+23:                                                           cond.true P:1 S:2
+	t62 = flag[17:int]                                                uint8
+	t63 = flag[26:int]                                                uint8
+	t64 = t62 == t63                                                   bool
+	if t64 goto 22 else 11
+24:                                                           cond.true P:1 S:2
+	t65 = flag[13:int]                                                uint8
+	t66 = flag[17:int]                                                uint8
+	t67 = t65 == t66                                                   bool
+	if t67 goto 23 else 11
+25:                                                           cond.true P:1 S:2
+	t68 = flag[32:int]                                                uint8
+	t69 = t68 == 116:byte                                              bool
+	if t69 goto 24 else 11
+26:                                                           cond.true P:1 S:2
+	t70 = flag[12:int]                                                uint8
+	t71 = flag[32:int]                                                uint8
+	t72 = t70 == t71                                                   bool
+	if t72 goto 25 else 11
+27:                                                           cond.true P:1 S:2
+	t73 = flag[10:int]                                                uint8
+	t74 = flag[12:int]                                                uint8
+	t75 = t73 == t74                                                   bool
+	if t75 goto 26 else 11
+28:                                                           cond.true P:1 S:2
+	t76 = flag[29:int]                                                uint8
+	t77 = t76 == 109:byte                                              bool
+	if t77 goto 27 else 11
+29:                                                           cond.true P:1 S:2
+	t78 = flag[22:int]                                                uint8
+	t79 = t78 == 95:byte                                               bool
+	if t79 goto 28 else 11
+30:                                                           cond.true P:1 S:2
+	t80 = flag[15:int]                                                uint8
+	t81 = flag[22:int]                                                uint8
+	t82 = t80 == t81                                                   bool
+	if t82 goto 29 else 11
+31:                                                           cond.true P:1 S:2
+	t83 = len(flag)                                                     int
+	t84 = t83 - 1:int                                                   int
+	t85 = flag[t84]                                                   uint8
+	t86 = t85 == 125:byte                                              bool
+	if t86 goto 30 else 11
+32:                                                           cond.true P:1 S:2
+	t87 = slice flag[:9:int]                                         string
+	t88 = t87 == "greyhats{":string                                    bool
+	if t88 goto 31 else 11
+

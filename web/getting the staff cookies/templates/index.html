@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Lambda Admin Report {% endblock %}
+
+{% block content %}
+<h1>Make a Report</h1>
+<p>
+  Have a link to report?
+  <br />
+  Key in your report and the admin will take note of it.
+  <br />
+  HTML is supported.
+</p>
+<form method="POST">
+  <div class="mb-3">
+    <label for="report" class="form-label">Report</label>
+    <textarea
+      name="report"
+      type="text"
+      class="form-control"
+      id="report"
+      placeholder="Report"
+    ></textarea>
+  </div>
+  <div class="mb-3">
+    <button type="submit" class="btn btn-primary">Make a report</button>
+  </div>
+</form>
+{% endblock %}

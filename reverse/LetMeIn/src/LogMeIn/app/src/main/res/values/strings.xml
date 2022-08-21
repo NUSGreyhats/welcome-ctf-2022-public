@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LogMeIn</string>
+    <string name="title_activity_login">Login</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="fake">greyhat{fake???}</string>
+</resources>

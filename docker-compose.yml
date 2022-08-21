@@ -1,0 +1,88 @@
+version: '3.7'
+
+x-pwn:
+    &pwn
+    cap_drop:
+        - all
+    cap_add:
+        - chown
+        - setuid
+        - setgid
+        - sys_admin
+    security_opt:
+        - apparmor=unconfined
+        - seccomp=unconfined
+
+x-crypto:
+    &crypto
+    cap_drop:
+        - all
+    cap_add:
+        - chown
+        - setuid
+        - setgid
+        - sys_admin
+    security_opt:
+        - apparmor=unconfined
+        - seccomp=unconfined
+
+services:
+
+    echo:
+        << : *pwn
+        build: ./pwn/echo
+        ports:
+            - "8050:5000"
+    checksum:
+        << : *pwn
+        build: ./pwn/checksum
+        ports:
+            - "8072:5000"
+    distinct:
+        << : *pwn
+        build: ./pwn/timesvc
+        ports:
+            - "8051:5000"
+    impossible:
+        << : *pwn
+        build: ./pwn/impossible
+        ports:
+            - "8075:5000"
+    distinct:
+        << : *pwn
+        build: ./pwn/unreachable
+        ports:
+            - "8092:5000"
+    web-the-discovery:
+        build: "./web/the discovery"
+        ports: 
+            - "8000:80"
+    web-the-disappearance:
+        build: "./web/the disappearence"
+        ports: 
+            - "8001:80"
+    web-get-staff-cookies:
+        build: "./web/getting the staff cookies"
+        ports: 
+            - "8003:2776"
+    web-getting-the-admin:
+        build: "./web/getting the admin"
+        ports: 
+            - "8004:2776"
+    web-export-data:
+        build: "./web/exporting data on inspector gadget"
+        ports: 
+            - "8005:2776"
+    web-rescuing-inspector-gadget:
+        build: "./web/rescuing inspector gadget/src"
+        ports: 
+            - "8006:2776"
+    misc-cannon:
+        << : *crypto
+        build: "./misc/cannon/service"
+        ports: 
+            - "8069:5000"
+    re-snake:
+        build: "./reverse/snake"
+        ports: 
+            - "8033:7000"

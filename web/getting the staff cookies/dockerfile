@@ -1,0 +1,26 @@
+FROM ubuntu:20.04
+
+#Update the packages
+RUN apt-get update
+
+# Add Env Args for tzdata package
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install python
+RUN apt-get install -y tzdata python3-pip python3 wget
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome-stable_current_amd64.deb
+
+# Set environment variables
+ENV CTF_FLAG "greyhats{4dm1n_cr3d5_acqu1r3d}"
+
+# Copy files
+COPY . .
+
+# Install requirements
+RUN pip3 install -r requirements.txt
+
+# Expose port
+EXPOSE 2776
+
+CMD ["gunicorn", "--bind", "0.0.0.0:2776", "wsgi:app"]
